@@ -24,14 +24,34 @@ async function fetchGithub() {
         console.log('got', jobs.length, 'jobs') // declare it 
         onPage++ // generate next page
     }
-    console.log('got', allJobs.length, 'jobs total')
-        // set redis key - val for github
-    const success = await setAsync('github', JSON.stringify(allJobs))
+    // console.log('got', allJobs.length, 'jobs total')
+    // console.log('got', allJobs[0])
 
-    // console.log({ success })
+
+
+
+    // filter only junior job 
+    const jrJobs = allJobs.filter(job => {
+        const jobTitle = job.title.toLowerCase()
+
+        if (
+            jobTitle.includes('senior') ||
+            jobTitle.includes('manager') ||
+            jobTitle.includes('sr.') ||
+            jobTitle.includes('architect')
+        ) {
+            return false
+        }
+        return true
+    })
+
+    console.log('filtered Down to ', jrJobs.length, 'jobs total')
+        // set redis key - val for github
+    const success = await setAsync('github', JSON.stringify(jrJobs))
+    console.log({ success })
 }
 
-// filter only junior job 
+
 
 
 // fetchGithub();  only for test to fire the fetch fun
